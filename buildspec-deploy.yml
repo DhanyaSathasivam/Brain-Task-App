@@ -1,4 +1,3 @@
-
 version: 0.2
 
 env:
@@ -9,7 +8,7 @@ env:
 phases:
   install:
     commands:
-      - curl -sSLO https://dl.k8s.io/release/v1.36.0/bin/linux/amd64/kubectl
+      - curl -sSLO https://dl.k8s.io/release/v1.36.5/bin/linux/amd64/kubectl
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/kubectl
       - kubectl version --client
@@ -22,7 +21,8 @@ phases:
 
   build:
     commands:
-      - kubectl apply -f k8s/
+      - IMAGE_URI=$(cat image-uri.txt)
+      - test -n "$IMAGE_URI"
       - kubectl set image deployment/brain-tasks-deployment brain-tasks-container=$IMAGE_URI
       - kubectl rollout status deployment/brain-tasks-deployment --timeout=300s
 
@@ -31,4 +31,3 @@ phases:
       - kubectl get deployments
       - kubectl get pods -o wide
       - kubectl get services
-
